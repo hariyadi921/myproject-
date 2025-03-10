@@ -1,0 +1,17 @@
+myproject/
+├── src/
+│   ├── go/                 # Kode Golang
+│   │   └── main.go
+│   ├── c/                  # Kode C
+│   │   └── mathlib.c
+│   │   └── mathlib.h
+├── scripts/
+│   ├── python/             # Skrip Python
+│   │   └── data_processor.py
+│   ├── bash/               # Skrip Bash
+│   │   └── build.sh
+├── Makefile
+├── go.mod
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml
