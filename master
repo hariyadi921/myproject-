@@ -1,0 +1,91 @@
+#include "mathlib.h"
+
+int add(int a, int b) {
+    return a + b;
+}
+package main
+
+/*
+#cgo CFLAGS: -I../c
+#cgo LDFLAGS: -L. -lmathlib
+#include "mathlib.h"
+*/
+import "C"
+import "fmt"
+
+func main() {
+    a := C.add(10, 20)
+    fmt.Printf("Result from C: %d\n", a)
+}
+def process_data(data):
+    return sum(data)
+
+if __name__ == "__main__":
+    print(process_data([1,2,3,4,5]))
+    #!/bin/bash
+
+# Build C library
+clang -c ../c/mathlib.c -o ../c/mathlib.o
+ar rcs libmathlib.a ../c/mathlib.o
+
+# Build Go
+export CGO_LDFLAGS="-L$(pwd)/c"
+go build -o main src/go/main.go
+
+# Run Python test
+python3 scripts/python/data_processor.py
+#!/bin/bash
+
+CC=clang
+PYTHON=python3
+
+all: build test
+
+build:
+    @echo "Building C library..."
+    $(CC) -c c/mathlib.c -o c/mathlib.o
+    ar rcs libmathlib.a c/mathlib.o
+    
+    @echo "Building Go..."
+    CGO_LDFLAGS="-L$(shell pwd)/c" go build -o bin/main src/go/main.go
+
+test:
+    @echo "Running Python tests..."
+    $(PYTHON) scripts/python/data_processor.py
+    
+    @echo "Running Go program..."
+    ./bin/main
+
+clean:
+    rm -f c/*.o *.a bin/main
+
+    name: CI/CD Pipeline
+
+on: [push]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.20
+
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang
+
+    - name: Build and Test
+      run: |
+        make all
+        
